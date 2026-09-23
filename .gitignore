@@ -1,0 +1,11 @@
+# Holds live Slack and SignalWire credentials.
+src/SlackSms/appsettings.json
+
+# Build output
+bin/
+obj/
+
+# IDE
+.vs/
+.idea/
+*.user

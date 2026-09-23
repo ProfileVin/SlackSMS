@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="SlackSms.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- HttpClient factory, hosted services, memory cache and options validation, version-aligned with the host. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SlackSms.Application\SlackSms.Application.csproj" />
+  </ItemGroup>
+
+</Project>

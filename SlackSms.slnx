@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SlackSms.Application/SlackSms.Application.csproj" />
+    <Project Path="src/SlackSms.Domain/SlackSms.Domain.csproj" />
+    <Project Path="src/SlackSms.Infrastructure/SlackSms.Infrastructure.csproj" />
+    <Project Path="src/SlackSms/SlackSms.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SlackSms.Tests/SlackSms.Tests.csproj" />
+  </Folder>
+</Solution>

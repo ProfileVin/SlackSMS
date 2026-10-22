@@ -8,11 +8,11 @@ public static class SignalWireSmsMapper
 {
     public static InboundSms ToInboundSms(IFormCollection form)
     {
-        var mediaUrls = new List<string>();
+        var media = new List<InboundMedia>();
         if (int.TryParse(form["NumMedia"], out var numMedia))
         {
             for (var i = 0; i < numMedia; i++)
-                mediaUrls.Add(form[$"MediaUrl{i}"].ToString());
+                media.Add(new InboundMedia(form[$"MediaUrl{i}"].ToString(), form[$"MediaContentType{i}"].ToString()));
         }
 
         return new InboundSms(
@@ -20,6 +20,6 @@ public static class SignalWireSmsMapper
             form["From"].ToString(),
             form["To"].ToString(),
             form["Body"].ToString(),
-            mediaUrls);
+            media);
     }
 }

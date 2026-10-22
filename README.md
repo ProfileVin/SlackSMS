@@ -150,6 +150,16 @@ call (`Failed to post SMS … to Slack`, HTTP 500), which still confirms the tun
 and the signing key. A `Rejected SignalWire request with invalid signature` warning instead means
 `SignalWire:WebhookPublicUrl` doesn't match the URL configured on the number.
 
+To test the inbound direction without texting the number, `scripts/Send-TestSmsWebhook.ps1` posts a
+correctly signed SignalWire webhook straight to the running app (this needs a real `Slack:BotToken`
+and `Slack:ChannelId`):
+
+```powershell
+.\scripts\Send-TestSmsWebhook.ps1 -Length 256              # generated body of exactly 256 chars, ending in END
+.\scripts\Send-TestSmsWebhook.ps1 -Length 256 -TextMedia   # text arrives as a .txt attachment, like some phones send it
+.\scripts\Send-TestSmsWebhook.ps1 -Text "hello"
+```
+
 ## Troubleshooting
 
 - **Slack message doesn't arrive as SMS.** Check that the bot is in the channel, that the event subscription (`message.channels` / `message.groups`) is saved, and look for `Queued Slack event` or SignalWire errors in the logs.

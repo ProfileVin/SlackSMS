@@ -48,6 +48,8 @@ public static class DependencyInjection
             http.BaseAddress = new Uri(SignalWireClient.GetBaseAddress(options.Space));
             http.Timeout = TimeSpan.FromSeconds(30);
         });
+        // Runs inside the inbound webhook, so keep it well under SignalWire's request timeout.
+        services.AddHttpClient<IMediaReader, SignalWireClient>(http => http.Timeout = TimeSpan.FromSeconds(10));
 
         services.AddSingleton<ISlackRequestVerifier, SlackRequestVerifier>();
         services.AddSingleton<ISignalWireRequestVerifier, SignalWireRequestVerifier>();

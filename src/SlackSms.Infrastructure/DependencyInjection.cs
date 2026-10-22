@@ -39,6 +39,8 @@ public static class DependencyInjection
         services.AddTransient<IChannelClient>(sp => sp.GetRequiredService<SlackClient>());
         services.AddTransient<IUserDirectory>(sp =>
             new CachedUserDirectory(sp.GetRequiredService<SlackClient>(), sp.GetRequiredService<IMemoryCache>()));
+        services.AddTransient<ISlackNameLookup>(sp => sp.GetRequiredService<SlackClient>());
+        services.AddTransient<IMessageTextRenderer, SlackTextRenderer>();
 
         services.AddHttpClient<ISmsSender, SignalWireClient>((sp, http) =>
         {

@@ -13,7 +13,7 @@ public static class SlackEventMapper
         [NotNullWhen(true)] out ChannelMessage? message)
     {
         message = ShouldForward(evt, channelId)
-            ? new ChannelMessage(eventId, evt.User, SlackTextFormatter.ToPlainText(evt.Text ?? ""), evt.Files is { Count: > 0 })
+            ? new ChannelMessage(eventId, evt.User, evt.Text ?? "", evt.Files is { Count: > 0 })
             : null;
         return message is not null;
     }

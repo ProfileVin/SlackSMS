@@ -39,6 +39,8 @@ public static class DependencyInjection
         services.AddTransient<IChannelClient>(sp => sp.GetRequiredService<SlackClient>());
         services.AddTransient<IUserDirectory>(sp =>
             new CachedUserDirectory(sp.GetRequiredService<SlackClient>(), sp.GetRequiredService<IMemoryCache>()));
+        services.AddTransient<ISlackNameLookup>(sp => sp.GetRequiredService<SlackClient>());
+        services.AddTransient<IMessageTextRenderer, SlackTextRenderer>();
 
         services.AddHttpClient<ISmsSender, SignalWireClient>((sp, http) =>
         {
@@ -46,6 +48,8 @@ public static class DependencyInjection
             http.BaseAddress = new Uri(SignalWireClient.GetBaseAddress(options.Space));
             http.Timeout = TimeSpan.FromSeconds(30);
         });
+        // Runs inside the inbound webhook, so keep it well under SignalWire's request timeout.
+        services.AddHttpClient<IMediaReader, SignalWireClient>(http => http.Timeout = TimeSpan.FromSeconds(10));
 
         services.AddSingleton<ISlackRequestVerifier, SlackRequestVerifier>();
         services.AddSingleton<ISignalWireRequestVerifier, SignalWireRequestVerifier>();

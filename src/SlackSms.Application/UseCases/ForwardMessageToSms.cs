@@ -9,6 +9,7 @@ namespace SlackSms.Application.UseCases;
 public sealed class ForwardMessageToSms(
     ISmsSender sms,
     IUserDirectory users,
+    IMessageTextRenderer renderer,
     IOptions<BridgeOptions> options,
     TimeProvider time,
     ILogger<ForwardMessageToSms> logger)
@@ -22,7 +23,8 @@ public sealed class ForwardMessageToSms(
         if (settings.IncludeSenderName && message.SenderId is { } senderId)
             senderName = await users.GetDisplayNameAsync(senderId, ct);
 
-        var body = SmsBody.Compose(message.PlainText, message.HasAttachments, senderName);
+        var plainText = await renderer.ToPlainTextAsync(message.Text, ct);
+        var body = SmsBody.Compose(plainText, message.HasAttachments, senderName);
 
         for (var attempt = 0; ; attempt++)
         {

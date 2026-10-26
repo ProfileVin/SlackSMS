@@ -34,7 +34,11 @@ as `[VerifySlackSignature]` / `[VerifySignalWireSignature]` filters before the b
 2. Under **OAuth & Permissions**, add these **Bot Token Scopes**:
    - `chat:write`
    - `channels:history` (for a private channel, use `groups:history` instead)
-   - `users:read` (only if `Slack:IncludeSenderName` is `true`)
+   - `users:read` (sender name prefix and `@person` mentions)
+   - `channels:read` and `groups:read` (`#channel` links; private channels also need the bot to be a member)
+   - `usergroups:read` (`@group` mentions)
+
+   Without these the bridge still works, but SMS shows `@U0123…` IDs or `#channel` instead of names.
 3. Click **Install to Workspace** and copy the **Bot User OAuth Token** (`xoxb-…`) into `Slack:BotToken`.
 4. Under **Basic Information**, copy the **Signing Secret** into `Slack:SigningSecret`.
 5. In Slack, open the channel, invite the bot (`/invite @YourApp`), and copy the channel ID into `Slack:ChannelId`. The ID is under channel details → About, and looks like `C0123456789`.
@@ -80,7 +84,7 @@ All settings live in `src/SlackSms/appsettings.json`:
   "BotToken": "xoxb-...",
   "SigningSecret": "...",
   "ChannelId": "C0123456789",
-  "IncludeSenderName": false
+  "IncludeSenderName": true
 },
 "SignalWire": {
   "Space": "example.signalwire.com",
@@ -107,7 +111,7 @@ Environment variables with double underscores (e.g. `SignalWire__ApiToken`) over
 | `Slack:BotToken` | yes | `xoxb-…` |
 | `Slack:SigningSecret` | yes | |
 | `Slack:ChannelId` | yes | Channel ID, not the name |
-| `Slack:IncludeSenderName` | no | Prefix SMS with the Slack display name (needs `users:read`) |
+| `Slack:IncludeSenderName` | no | Default `true`: prefix SMS with the sender's Slack display name, e.g. `Alvin: hi` (needs `users:read`) |
 | `SignalWire:Space` | yes | `example` or `example.signalwire.com` |
 | `SignalWire:ProjectId` / `ApiToken` | yes | |
 | `SignalWire:SigningKey` | yes | Validates incoming webhooks |
@@ -145,6 +149,16 @@ real `xoxb-` token is in place the request passes the signature check and then f
 call (`Failed to post SMS … to Slack`, HTTP 500), which still confirms the tunnel, the webhook URL
 and the signing key. A `Rejected SignalWire request with invalid signature` warning instead means
 `SignalWire:WebhookPublicUrl` doesn't match the URL configured on the number.
+
+To test the inbound direction without texting the number, `scripts/Send-TestSmsWebhook.ps1` posts a
+correctly signed SignalWire webhook straight to the running app (this needs a real `Slack:BotToken`
+and `Slack:ChannelId`):
+
+```powershell
+.\scripts\Send-TestSmsWebhook.ps1 -Length 256              # generated body of exactly 256 chars, ending in END
+.\scripts\Send-TestSmsWebhook.ps1 -Length 256 -TextMedia   # text arrives as a .txt attachment, like some phones send it
+.\scripts\Send-TestSmsWebhook.ps1 -Text "hello"
+```
 
 ## Troubleshooting
 

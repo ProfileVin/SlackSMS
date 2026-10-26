@@ -18,6 +18,6 @@ public sealed class SlackOptions
     [Required]
     public string ChannelId { get; set; } = "";
 
-    /// <summary>Prefix outgoing SMS with the Slack user's display name. Requires the users:read scope.</summary>
-    public bool IncludeSenderName { get; set; }
+    /// <summary>Prefix outgoing SMS with the Slack user's display name (default on). Requires the users:read scope.</summary>
+    public bool IncludeSenderName { get; set; } = true;
 }
